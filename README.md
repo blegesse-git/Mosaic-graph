@@ -1,70 +1,71 @@
-# Getting Started with Create React App
+# Giraffe Mosaic Graph 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a an example React app that uses Giraffe to generate a Mosaic graph using results from a Flux query. 
 
-## Available Scripts
+## Quick Start
 
-In the project directory, you can run:
+Giraffe can be used in a simple index.html page without any advanced configuration. Even though Giraffe is designed to work with React apps, you won't need React or Node.js. However, for this sample app, we are going to create this project using React. 
 
-### `yarn start`
+Step 1 
+```
+Run npx create-react-app my-app in your terminal 
+cd my-app
+npm start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Step 2
+In app.js, start off by importing the following: 
+```
+import React, { Component } from 'react';
+import { Plot } from '@influxdata/giraffe';
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Step 3
+In the src folder, create a new file. This is where you'll save the comma seperated values (CSV) from the Flux query.
+Once this step is complete, import the csv file into your app.js 
+```
+import { cloudy } from './mosaicCSV';
+```
 
-### `yarn test`
+Step 4
+In the render method of app.js, we will create a mosaic layer config object with the following properties: 
+```
+    const mosaicLayer = {
+      type: "mosaic",
+      x: "_time",
+      y: ["city"],
+      yLabelColumns: ["city"],
+      yLabelColumnSeparator: "",
+      fill: ["_value"],
+      hoverDimension: "xy",
+      colors: ["#31C0F6", "#BC00B8", "#FF7E27"]
+    };
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Step 5
+Next, we will need to create a configuration object that tells Giraffe to render a mosaic graph. Add the following code into the config object: 
+```
+    const config = {
+      fluxResponse: cloudy,
+      legendFont: "12px sans-serif",
+      legendOrientationThreshold: 5,
+      showAxes: true,
+      tickFont: "10px sans-serif",
+      layers: [mosaicLayer]
+    };
+```
+Step 6
+Our last step is to add <Plot> in the return statement and pass in the config object as prop. 
+```
+    return (
+      <div
+        style={{
+          width: 'calc(100vw - 100px)',
+          height: 'calc(100vh - 125px)',
+          margin: '50px',
+        }}
+      >
+        <Plot config = { config } />
+       </div>
+    )
+```
